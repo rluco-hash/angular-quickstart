@@ -60,6 +60,7 @@ export class AppComponent {
   lastUpdated: Date | null = null;
   search = '';
   companyFilter = '';
+  activeView: 'podium' | 'list' = 'podium';
 
   constructor(private _http: HttpClient) {}
 
@@ -133,6 +134,10 @@ export class AppComponent {
 
   onCompany(value: string): void {
     this.companyFilter = value;
+  }
+
+  setView(view: 'podium' | 'list'): void {
+    this.activeView = view;
   }
 
   trackByRow(_index: number, row: RankedRow): number {

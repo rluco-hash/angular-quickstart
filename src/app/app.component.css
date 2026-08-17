@@ -128,6 +128,224 @@
   background: var(--theme-warning);
 }
 
+/* ---------- Tabs (Podio / Lista completa) ---------- */
+
+.board__tabs {
+  display: inline-flex;
+  gap: 0.5rem;
+  padding: 1.25rem 0 0;
+}
+
+.board__tab {
+  padding: 0.5rem 1rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 100px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background 0.15s ease;
+}
+
+.board__tab:hover:not(.is-active) {
+  border-color: var(--ink-soft);
+}
+
+.board__tab.is-active {
+  color: var(--accent-deep);
+  border-color: var(--accent);
+  background: rgba(65, 180, 228, 0.12);
+}
+
+/* ---------- Podio ---------- */
+
+.podium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(0.75rem, 3vw, 1.5rem);
+  padding: 2rem 0 1rem;
+}
+
+.podium__place {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 14rem;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.podium__place--first {
+  order: 2;
+}
+
+.podium__place--second {
+  order: 1;
+}
+
+.podium__place--third {
+  order: 3;
+}
+
+.podium__crown {
+  margin-bottom: 0.35rem;
+  font-size: 1.125rem;
+  color: var(--gold);
+}
+
+.podium__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-family: "Unbounded", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--theme-white);
+  border-radius: 50%;
+  background: var(--silver);
+}
+
+.podium__place--first .podium__badge {
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: 0.875rem;
+  background: var(--gold);
+}
+
+.podium__place--third .podium__badge {
+  background: var(--bronze);
+}
+
+.podium__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent-deep);
+  background: rgba(65, 180, 228, 0.12);
+  border: 2px solid transparent;
+  border-radius: 50%;
+}
+
+.podium__place--first .podium__avatar {
+  width: 4.5rem;
+  height: 4.5rem;
+  font-size: 1rem;
+  border-color: var(--gold);
+}
+
+.podium__place--second .podium__avatar {
+  border-color: var(--silver);
+}
+
+.podium__place--third .podium__avatar {
+  border-color: var(--bronze);
+}
+
+.podium__name {
+  margin: 0;
+  overflow: hidden;
+  font-family: "Zalando Sans SemiExpanded", sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.podium__place--first .podium__name {
+  font-size: 1rem;
+}
+
+.podium__company {
+  margin: 0.15rem 0 0.75rem;
+  overflow: hidden;
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.podium__score {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.3rem;
+  width: 100%;
+  min-height: 4rem;
+  padding: 0.6rem 0.5rem;
+  font-family: "Unbounded", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.podium__place--first .podium__score {
+  min-height: 6rem;
+  font-size: 1.75rem;
+  background: var(--gold-soft);
+}
+
+.podium__place--third .podium__score {
+  min-height: 3.5rem;
+  font-size: 1.125rem;
+}
+
+@media (max-width: 720px) {
+  .podium {
+    gap: 0.5rem;
+  }
+
+  .podium__avatar {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .podium__place--first .podium__avatar {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+
+  .podium__score {
+    min-height: 3rem;
+    font-size: 1rem;
+  }
+
+  .podium__place--first .podium__score {
+    min-height: 4.5rem;
+    font-size: 1.375rem;
+  }
+
+  .podium__place--third .podium__score {
+    min-height: 2.75rem;
+    font-size: 0.875rem;
+  }
+}
+
 /* ---------- Buscador y orden ---------- */
 
 .board__toolbar {
