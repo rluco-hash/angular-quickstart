@@ -45,12 +45,34 @@
    (.6875rem, .8125rem, .9375rem, 1.0625rem) y ensucian la lectura: no usarlos. */
 
 :host {
+   /* $theme-colors (valores reales tomados de
+     apps/frontend/chile/src/scss/_variables.scss) */
+  --theme-secondary: #133660; /* theme-colors.secondary */
+  --theme-secondary-300: #7186a0; /* theme-colors.secondary-300 */
+  --theme-primary: #41b4e4; /* theme-colors.primary */
+  --theme-primary-700: #276c89; /* theme-colors.primary-700 */
+  --theme-white: #ffffff; /* theme-colors.white */
+  --theme-dark-300: #b2b2b2; /* theme-colors.dark-300 */
+  --theme-dark-400: #999999; /* theme-colors.dark-400 */
+  --theme-success: #00b900; /* theme-colors.success */
+  --theme-warning: #fa8e04; /* theme-colors.warning */
+  /* theme-colors.dark-50 NO EXISTE en $theme-colors (bug preexistente en el
+     .scss original: el map-get devuelve null). La escala real es
+     dark-100, dark-200, dark-300... Uso dark-100 como reemplazo mas cercano;
+     ajusta si prefieres otro tono claro. */
+  --theme-dark-50: #e9e9e9;
+
+  /* $border-radius (valores reales tomados de
+     libs/front/src/lib/styles/_variables.scss) */
+     
+  --radius-sm: 4px; /* border-radius.sm */
+  --radius-lg: 12px; /* border-radius.lg */
   --ink: var(--theme-secondary);
   --ink-soft: var(--theme-secondary-300);
   --accent: var(--theme-primary);
   --accent-deep: var(--theme-primary-700);
   --surface: var(--theme-white);
-  --canvas: var(--theme-dark-50);
+  --canvas: #F7F9FC;
   --hairline: rgba(19, 54, 96, 0.1);
   /* Metales del podio: apagados a proposito para convivir con el celeste de
      marca sobre fondo claro (los tonos saturados quedan chillones en blanco).
