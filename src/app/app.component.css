@@ -1,36 +1,4 @@
 /* ============================================================
-   VARIABLES A CONFIGURAR
-   Estas equivalen a los map-get($theme-colors, ...) y
-   map-get($border-radius, ...) que usaba el .scss original.
-   Reemplaza cada valor por el que corresponda en el proyecto
-   destino (o apunta estas custom properties a las variables
-   que ya existan alla).
-   ============================================================ */
-:root {
-  /* $theme-colors (valores reales tomados de
-     apps/frontend/chile/src/scss/_variables.scss) */
-  --theme-secondary: #133660; /* theme-colors.secondary */
-  --theme-secondary-300: #7186a0; /* theme-colors.secondary-300 */
-  --theme-primary: #41b4e4; /* theme-colors.primary */
-  --theme-primary-700: #276c89; /* theme-colors.primary-700 */
-  --theme-white: #ffffff; /* theme-colors.white */
-  --theme-dark-300: #b2b2b2; /* theme-colors.dark-300 */
-  --theme-dark-400: #999999; /* theme-colors.dark-400 */
-  --theme-success: #00b900; /* theme-colors.success */
-  --theme-warning: #fa8e04; /* theme-colors.warning */
-  /* theme-colors.dark-50 NO EXISTE en $theme-colors (bug preexistente en el
-     .scss original: el map-get devuelve null). La escala real es
-     dark-100, dark-200, dark-300... Uso dark-100 como reemplazo mas cercano;
-     ajusta si prefieres otro tono claro. */
-  --theme-dark-50: #e9e9e9;
-
-  /* $border-radius (valores reales tomados de
-     libs/front/src/lib/styles/_variables.scss) */
-  --radius-sm: 4px; /* border-radius.sm */
-  --radius-lg: 12px; /* border-radius.lg */
-}
-
-/* ============================================================
    ESTILOS
    ============================================================ */
 
@@ -64,7 +32,7 @@
 
   /* $border-radius (valores reales tomados de
      libs/front/src/lib/styles/_variables.scss) */
-     
+
   --radius-sm: 4px; /* border-radius.sm */
   --radius-lg: 12px; /* border-radius.lg */
   --ink: var(--theme-secondary);
