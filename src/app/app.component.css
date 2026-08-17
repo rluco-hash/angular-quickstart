@@ -238,6 +238,9 @@
 }
 
 .board__menu {
+  display: none;
+  position: absolute;
+  z-index: 1000;
   min-width: 14rem;
   max-height: 17rem;
   overflow-y: auto;
@@ -246,6 +249,12 @@
   border: 1px solid var(--hairline);
   border-radius: var(--radius-lg);
   box-shadow: 0 12px 28px rgba(19, 54, 96, 0.12);
+}
+
+/* ngbDropdownMenu agrega .show via host binding cuando el dropdown esta
+   abierto; sin el CSS de Bootstrap no hay ninguna regla que la aproveche. */
+.board__menu.show {
+  display: block;
 }
 
 .board__option {
