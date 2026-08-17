@@ -23,14 +23,7 @@
     </div>
   </header>
 
-  <div class="board__tabs" *ngIf="rows.length">
-    <button type="button" class="board__tab" [class.is-active]="activeView === 'podium'"
-      (click)="setView('podium')">Podio</button>
-    <button type="button" class="board__tab" [class.is-active]="activeView === 'list'"
-      (click)="setView('list')">Lista completa</button>
-  </div>
-
-  <section class="podium" *ngIf="activeView === 'podium' && rows.length">
+  <section class="podium" *ngIf="rows.length">
     <div class="podium__place podium__place--second" *ngIf="rows[1] as row">
       <span class="podium__badge">2</span>
       <span class="podium__avatar" aria-hidden="true">{{ row.initials }}</span>
@@ -66,85 +59,79 @@
     </div>
   </section>
 
-  <ng-container *ngIf="activeView === 'list' || !rows.length">
-    <div class="board__toolbar" *ngIf="rows.length">
-      <div class="board__search">
-        <input type="search" class="board__input" placeholder="Buscar participante o empresa"
-          aria-label="Buscar participante o empresa" [value]="search" (input)="onSearch($any($event.target).value)" />
-      </div>
+  <!-- El listado arranca en el 4to puesto: del 1 al 3 ya los muestra el podio.
+       Se pagina de a 10 para no imprimir cientos de filas de una. -->
+  <ol class="board__list">
+    <ng-container *ngIf="listRows.length; else emptyList">
+      <li class="entry" *ngFor="let row of pagedRows; let i = index; trackBy: trackByRow" [class.entry--scored]="row.justScored"
+        [style.--i]="i">
+        <span class="entry__position">{{ row.position }}</span>
 
-      <!-- Dropdown propio y no <select>: el panel nativo lo dibuja el sistema y
-             no se puede alinear con la tipografia del resto de la pagina. -->
-      <div class="board__filter" ngbDropdown #companyDrop="ngbDropdown">
-        <button type="button" class="board__toggle" [class.is-active]="companyFilter" aria-label="Filtrar por empresa"
-          ngbDropdownToggle>{{ companyLabel }}</button>
+        <span class="entry__avatar" aria-hidden="true">{{ row.initials }}</span>
 
-        <div class="board__menu" ngbDropdownMenu aria-label="Empresas">
-          <button type="button" class="board__option" [class.is-selected]="!companyFilter" ngbDropdownItem
-            (click)="onCompany('')">Todas las empresas</button>
-
-          <button type="button" class="board__option" *ngFor="let company of companies; trackBy: trackByCompany"
-            [class.is-selected]="company === companyFilter" ngbDropdownItem (click)="onCompany(company)">{{ company
-            }}</button>
-        </div>
-      </div>
-    </div>
-
-    <ol class="board__list">
-      <ng-container *ngIf="visibleRows.length; else emptyList">
-        <li class="entry" *ngFor="let row of visibleRows; let i = index; trackBy: trackByRow"
-          [class.entry--podium]="row.position <= 3" [class.entry--gold]="row.position === 1"
-          [class.entry--silver]="row.position === 2" [class.entry--bronze]="row.position === 3"
-          [class.entry--scored]="row.justScored" [style.--i]="i">
-          <span class="entry__position">{{ row.position }}</span>
-
-          <span class="entry__avatar" aria-hidden="true">{{ row.initials }}</span>
-
-          <div class="entry__identity">
-            <p class="entry__name">
-              {{ row.name }}
-              <ng-container [ngSwitch]="true">
-                <span *ngSwitchCase="row.delta > 0" class="entry__delta entry__delta--up"
-                  title="Subió {{ row.delta }}">
-                  ▲{{ row.delta }}
-                </span>
-                <span *ngSwitchCase="row.delta < 0" class="entry__delta entry__delta--down"
-                  title="Bajó {{ -row.delta }}">
-                  ▼{{ -row.delta }}
-                </span>
-                <span *ngSwitchCase="row.isNew" class="entry__delta entry__delta--new">nuevo</span>
-              </ng-container>
-            </p>
-            <p class="entry__company" *ngIf="row.company">{{ row.company }}</p>
-          </div>
-
-          <div class="entry__score">
-            <p class="entry__points">
-              {{ row.total | number: '1.0-0' }}<span class="entry__unit">pts</span>
-            </p>
-            <p class="entry__breakdown">
-              Dados {{ row.dados | number: '1.0-0' }} · Raspe {{ row.raspe | number: '1.0-0' }}
-            </p>
-          </div>
-        </li>
-      </ng-container>
-      <ng-template #emptyList>
-        <li class="board__empty">
-          <ng-container *ngIf="isLoading; else notLoading">
-            Cargando participantes…
-          </ng-container>
-          <ng-template #notLoading>
-            <ng-container *ngIf="search; else noSearch">
-              Sin resultados para “{{ search }}”.
+        <div class="entry__identity">
+          <p class="entry__name">
+            {{ row.name }}
+            <ng-container [ngSwitch]="true">
+              <span *ngSwitchCase="row.delta > 0" class="entry__delta entry__delta--up"
+                title="Subió {{ row.delta }}">
+                ▲{{ row.delta }}
+              </span>
+              <span *ngSwitchCase="row.delta < 0" class="entry__delta entry__delta--down"
+                title="Bajó {{ -row.delta }}">
+                ▼{{ -row.delta }}
+              </span>
+              <span *ngSwitchCase="row.isNew" class="entry__delta entry__delta--new">nuevo</span>
             </ng-container>
-            <ng-template #noSearch>
-              Aún no hay participantes registrados.
-            </ng-template>
+          </p>
+          <p class="entry__company" *ngIf="row.company">{{ row.company }}</p>
+        </div>
+
+        <div class="entry__score">
+          <p class="entry__points">
+            {{ row.total | number: '1.0-0' }}<span class="entry__unit">pts</span>
+          </p>
+          <p class="entry__breakdown">
+            Dados {{ row.dados | number: '1.0-0' }} · Raspe {{ row.raspe | number: '1.0-0' }}
+          </p>
+        </div>
+      </li>
+    </ng-container>
+    <ng-template #emptyList>
+      <li class="board__empty">
+        <ng-container *ngIf="isLoading; else notLoading">
+          Cargando participantes…
+        </ng-container>
+        <ng-template #notLoading>
+          <ng-container *ngIf="rows.length; else noParticipants">
+            Por ahora solo hay participantes en el podio.
+          </ng-container>
+          <ng-template #noParticipants>
+            Aún no hay participantes registrados.
           </ng-template>
-        </li>
-      </ng-template>
-    </ol>
-  </ng-container>
+        </ng-template>
+      </li>
+    </ng-template>
+  </ol>
+
+  <nav class="pager" *ngIf="hasPages" aria-label="Paginación del ranking">
+    <button type="button" class="pager__btn" [disabled]="page === 0" (click)="goToPage(page - 1)"
+      aria-label="Página anterior">
+      <i class="fas fa-chevron-left" aria-hidden="true"></i>
+      Anterior
+    </button>
+
+    <p class="pager__state" aria-live="polite">
+      Puestos {{ pageFrom }}–{{ pageTo }} de {{ rows.length | number: '1.0-0' }}
+      <span class="pager__page">Página {{ page + 1 }} de {{ totalPages }}</span>
+    </p>
+
+    <button type="button" class="pager__btn" [disabled]="page === totalPages - 1" (click)="goToPage(page + 1)"
+      aria-label="Página siguiente">
+      Siguiente
+      <i class="fas fa-chevron-right" aria-hidden="true"></i>
+    </button>
+  </nav>
 
   <ng-container *ngIf="rows.length">
     <aside class="prize">
@@ -153,6 +140,10 @@
       <div class="prize__copy">
         <p class="prize__title">Premio: 10 bolsas de merch</p>
         <p class="prize__detail">Para las empresas con mayor puntaje al cierre del desafío</p>
+        <p class="prize__raffle">
+          <i class="fas fa-calendar-day" aria-hidden="true"></i>
+          Sorteo: {{ raffleDate }} por nuestro Instagram
+        </p>
       </div>
 
       <span class="prize__marks" aria-hidden="true">
@@ -163,12 +154,38 @@
     </aside>
 
     <footer class="board__foot">
-      <span *ngIf="isFiltered; else notFiltered">{{ visibleRows.length | number: '1.0-0' }} de {{ rows.length | number:
-        '1.0-0' }} participantes</span>
-      <ng-template #notFiltered>
-        <span>{{ rows.length | number: '1.0-0' }} participantes</span>
-      </ng-template>
+      <span>{{ rows.length | number: '1.0-0' }} participantes</span>
       <span>Actualización automática cada 5 segundos</span>
     </footer>
   </ng-container>
+
+  <!-- Redes: los QR son SVG estaticos (assets/qr), no dependen de ningun
+       servicio externo de imagenes. -->
+  <section class="social">
+    <header class="social__head">
+      <h2 class="social__title">Escanea y síguenos</h2>
+      <p class="social__lead">Apunta con la cámara de tu teléfono</p>
+    </header>
+
+    <div class="social__grid">
+      <a class="social__card" *ngFor="let social of socials; trackBy: trackBySocial" [href]="social.url" target="_blank"
+        rel="noopener noreferrer">
+        <img class="social__qr" [src]="social.qr" [alt]="'Código QR de ' + social.label" width="128" height="128"
+          loading="lazy" />
+        <span class="social__name">
+          <i [class]="social.icon" aria-hidden="true"></i>
+          {{ social.label }}
+        </span>
+        <span class="social__detail">{{ social.detail }}</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Boton flotante: acompana el scroll, por eso vive fuera de la seccion de
+       redes. En movil se reduce a solo el icono. -->
+  <a class="chat" [href]="whatsappUrl" target="_blank" rel="noopener noreferrer"
+    aria-label="Chatea con nosotros por WhatsApp">
+    <i class="fab fa-whatsapp" aria-hidden="true"></i>
+    <span class="chat__label">Chatea con nosotros</span>
+  </a>
 </div>

@@ -57,10 +57,12 @@
   font-family: "Montserrat", sans-serif;
 }
 
+/* El padding inferior deja aire para el boton flotante de WhatsApp: sin el,
+   tapa la ultima tarjeta al final del scroll. */
 .board {
   max-width: 1040px;
   margin: 0 auto;
-  padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 4vw, 2.5rem) 3rem;
+  padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 4vw, 2.5rem) 7rem;
 }
 
 /* ---------- Cabecera ---------- */
@@ -126,40 +128,6 @@
 
 .board__pulse--error {
   background: var(--theme-warning);
-}
-
-/* ---------- Tabs (Podio / Lista completa) ---------- */
-
-.board__tabs {
-  display: inline-flex;
-  gap: 0.5rem;
-  padding: 1.25rem 0 0;
-}
-
-.board__tab {
-  padding: 0.5rem 1rem;
-  font-family: inherit;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--ink-soft);
-  background: var(--surface);
-  border: 1px solid var(--hairline);
-  border-radius: 100px;
-  cursor: pointer;
-  transition:
-    border-color 0.15s ease,
-    color 0.15s ease,
-    background 0.15s ease;
-}
-
-.board__tab:hover:not(.is-active) {
-  border-color: var(--ink-soft);
-}
-
-.board__tab.is-active {
-  color: var(--accent-deep);
-  border-color: var(--accent);
-  background: rgba(65, 180, 228, 0.12);
 }
 
 /* ---------- Podio ---------- */
@@ -346,154 +314,6 @@
   }
 }
 
-/* ---------- Buscador y orden ---------- */
-
-.board__toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-  padding: 1.25rem 0;
-}
-
-.board__search {
-  flex: 1 1 15rem;
-  min-width: 0;
-}
-
-.board__input {
-  width: 100%;
-  padding: 0.6rem 0.9rem;
-  font-family: inherit;
-  font-size: 0.875rem;
-  color: var(--ink);
-  background: var(--surface);
-  border: 1px solid var(--hairline);
-  border-radius: 100px;
-  transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
-}
-
-.board__input::placeholder {
-  color: var(--theme-dark-400);
-}
-
-.board__input:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(65, 180, 228, 0.16);
-}
-
-/* Desplegable de empresas. Es un dropdown propio (ngbDropdown) porque el panel
-   de un <select> lo dibuja el sistema operativo y no se puede alinear con la
-   tipografia ni los colores del resto de la pagina. */
-.board__filter {
-  flex: 0 1 14rem;
-  min-width: 0;
-}
-
-.board__toggle {
-  width: 100%;
-  padding: 0.6rem 2rem 0.6rem 0.9rem;
-  font-family: inherit;
-  font-size: 0.875rem;
-  font-weight: 500;
-  text-align: left;
-  color: var(--ink);
-  background: var(--surface);
-  border: 1px solid var(--hairline);
-  border-radius: 100px;
-  cursor: pointer;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  /* Chevron dibujado con gradientes: evita traer un icono solo para esto. */
-  background-image:
-    linear-gradient(45deg, transparent 50%, currentColor 50%),
-    linear-gradient(135deg, currentColor 50%, transparent 50%);
-  background-position:
-    calc(100% - 1.1rem) 55%,
-    calc(100% - 0.8rem) 55%;
-  background-size:
-    0.3rem 0.3rem,
-    0.3rem 0.3rem;
-  background-repeat: no-repeat;
-  transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
-}
-
-/* ngbDropdownToggle agrega la clase .dropdown-toggle de Bootstrap, que dibuja
-   su propio caret con ::after. Se anula: el chevron ya lo pone el gradiente. */
-.board__toggle::after {
-  display: none;
-}
-
-/* ngb marca el toggle abierto; se resalta igual que en foco. */
-.board__toggle:focus-visible,
-.board__toggle[aria-expanded="true"] {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(65, 180, 228, 0.16);
-}
-
-/* Con filtro puesto el control deja de ser neutro. */
-.board__toggle.is-active {
-  border-color: var(--accent);
-  color: var(--accent-deep);
-}
-
-.board__menu {
-  display: none;
-  position: absolute;
-  z-index: 1000;
-  min-width: 14rem;
-  max-height: 17rem;
-  overflow-y: auto;
-  padding: 0.35rem;
-  background: var(--surface);
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 12px 28px rgba(19, 54, 96, 0.12);
-}
-
-/* ngbDropdownMenu agrega .show via host binding cuando el dropdown esta
-   abierto; sin el CSS de Bootstrap no hay ninguna regla que la aproveche. */
-.board__menu.show {
-  display: block;
-}
-
-.board__option {
-  display: block;
-  width: 100%;
-  padding: 0.5rem 0.7rem;
-  font-family: inherit;
-  font-size: 0.875rem;
-  font-weight: 500;
-  text-align: left;
-  color: var(--ink);
-  background: transparent;
-  border: 0;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.board__option:hover,
-.board__option:focus-visible {
-  outline: none;
-  background: var(--theme-dark-50);
-}
-
-.board__option.is-selected {
-  color: var(--accent-deep);
-  background: rgba(65, 180, 228, 0.12);
-}
-
 /* ---------- Lista ---------- */
 
 .board__list {
@@ -630,43 +450,76 @@
   white-space: nowrap;
 }
 
-/* ---------- Podio ---------- */
+/* ---------- Paginador ---------- */
 
-/* El podio se distingue solo por tamano; el metal vive unicamente en el numero
-   de puesto. Sin fondos ni bandas: la fila sigue el mismo ritmo que el resto. */
-.entry--podium {
-  padding: 1.15rem 0.25rem;
+/* Centrado y acotado a proposito: pegado al borde derecho, el boton Siguiente
+   queda debajo del flotante de WhatsApp. */
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: 1.25rem 0.25rem 0;
 }
 
-.entry--podium .entry__position {
-  font-size: 1.5rem;
+.pager__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 1rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 100px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
 
-.entry--podium .entry__name {
-  font-size: 1rem;
-  text-transform: capitalize;
+.pager__btn i {
+  font-size: 0.75rem;
 }
 
-.entry--podium .entry__points {
-  font-size: 1.625rem;
+.pager__btn:hover:not(:disabled),
+.pager__btn:focus-visible:not(:disabled) {
+  outline: none;
+  color: var(--accent-deep);
+  border-color: var(--accent);
 }
 
-.entry--gold .entry__position {
-  /* El primer puesto es el unico que crece de verdad. */
-  font-size: 1.75rem;
-  color: var(--gold);
+/* Deshabilitado en vez de escondido: los controles no se mueven al paginar. */
+.pager__btn:disabled {
+  color: var(--theme-dark-300);
+  cursor: default;
 }
 
-.entry--gold .entry__points {
-  font-size: 2rem;
+.pager__state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  margin: 0;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
 }
 
-.entry--silver .entry__position {
-  color: var(--silver);
-}
-
-.entry--bronze .entry__position {
-  color: var(--bronze);
+.pager__page {
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--theme-dark-400);
 }
 
 /* ---------- Puntaje recien actualizado ---------- */
@@ -731,6 +584,22 @@
   color: var(--ink-soft);
 }
 
+/* Fecha del sorteo: dato con fecha, se marca en celeste de marca para que no se
+   lea como una linea mas de la letra chica del premio. */
+.prize__raffle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.5rem 0 0;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--accent-deep);
+  background: rgba(65, 180, 228, 0.12);
+  border-radius: 100px;
+}
+
 .prize__marks {
   flex: 0 0 auto;
   display: inline-flex;
@@ -761,6 +630,140 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--theme-dark-400);
+}
+
+/* ---------- Redes y contacto ---------- */
+
+.social {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--hairline);
+}
+
+.social__head {
+  text-align: center;
+}
+
+.social__title {
+  margin: 0;
+  font-family: "Unbounded", sans-serif;
+  font-size: 1.125rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.social__lead {
+  margin: 0.35rem 0 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* auto-fit con minimo de 12rem: tres columnas en desktop y una sola en movil
+   sin necesidad de otra media query. */
+.social__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.social__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  text-decoration: none;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.social__card:hover,
+.social__card:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(19, 54, 96, 0.1);
+}
+
+/* El QR ya trae su propio margen blanco (quiet zone) dentro del SVG. */
+.social__qr {
+  width: 8rem;
+  height: 8rem;
+  max-width: 100%;
+  border-radius: var(--radius-sm);
+}
+
+.social__name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: "Zalando Sans SemiExpanded", sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.social__name i {
+  font-size: 1rem;
+  color: var(--accent);
+}
+
+.social__detail {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+}
+
+/* ---------- Boton flotante de WhatsApp ---------- */
+
+/* Unico boton solido de la pantalla: es la unica accion que pedimos. Va fijo
+   abajo a la derecha, sobre el scroll. */
+.chat {
+  position: fixed;
+  right: clamp(1rem, 3vw, 2rem);
+  bottom: clamp(1rem, 3vw, 2rem);
+  z-index: 900;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.35rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  color: var(--theme-white);
+  background: #25d366; /* verde oficial de WhatsApp */
+  border-radius: 100px;
+  box-shadow: 0 10px 24px rgba(19, 54, 96, 0.22);
+  transition:
+    filter 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.chat i {
+  font-size: 1.5rem;
+}
+
+.chat:hover,
+.chat:focus-visible {
+  outline: none;
+  filter: brightness(0.94);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(37, 211, 102, 0.35);
 }
 
 /* ---------- Animaciones ---------- */
@@ -809,21 +812,32 @@
     display: none;
   }
 
-  .board__toolbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
-  }
-
-  /* En columna el flex-basis pasa a controlar la ALTURA: el 1 1 15rem del
-     buscador reservaba 15rem de alto y abria un hueco entre ambos controles. */
-  .board__search,
-  .board__filter {
-    flex: 0 0 auto;
-  }
-
   /* Los sellos del premio son decorativos: se van antes que el texto. */
   .prize__marks {
+    display: none;
+  }
+
+  /* Los dos botones arriba y el estado abajo: en una sola linea no caben y el
+     wrap los dejaba desalineados. */
+  .pager {
+    row-gap: 0.75rem;
+  }
+
+  .pager__state {
+    order: 3;
+    flex: 1 0 100%;
+  }
+
+  /* En pantalla chica el boton se reduce al icono: el texto se comia el ancho
+     de la fila que queda debajo. El aria-label sigue nombrandolo. */
+  .chat {
+    width: 3.5rem;
+    height: 3.5rem;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .chat__label {
     display: none;
   }
 }

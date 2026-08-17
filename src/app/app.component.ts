@@ -36,6 +36,16 @@ interface RankedRow {
   justScored: boolean;
 }
 
+/** Tarjeta de red social con su QR ya generado (src/assets/qr). */
+interface SocialLink {
+  key: string;
+  label: string;
+  detail: string;
+  icon: string;
+  url: string;
+  qr: string;
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -44,6 +54,43 @@ interface RankedRow {
 export class AppComponent {
   title = 'angular-quickstart';
   iframeUrl: { default?: SafeResourceUrl; community?: SafeResourceUrl } = {};
+
+  /** Fecha del sorteo, anunciada junto al premio. */
+  readonly raffleDate = '1 de septiembre';
+
+  // TODO: reemplazar por el numero real de WhatsApp de QuePlan.
+  private readonly whatsappNumber = '56900000000';
+  private readonly whatsappMessage =
+    'Hola QuePlan, quiero saber más del Desafío Bienestar.';
+
+  /* Los QR son SVG estaticos generados offline (encoder QR sobre las URLs de
+     abajo). Si cambia una URL hay que regenerar el SVG correspondiente. */
+  readonly socials: SocialLink[] = [
+    {
+      key: 'comparador',
+      label: 'Comparador',
+      detail: 'queplan.cl',
+      icon: 'fas fa-magnifying-glass-chart',
+      url: 'https://www.queplan.cl',
+      qr: 'assets/qr/qr-comparador.svg',
+    },
+    {
+      key: 'instagram',
+      label: 'Instagram',
+      detail: '@queplan.cl',
+      icon: 'fab fa-instagram',
+      url: 'https://www.instagram.com/queplan.cl',
+      qr: 'assets/qr/qr-instagram.svg',
+    },
+    {
+      key: 'linkedin',
+      label: 'LinkedIn',
+      detail: 'QuePlan',
+      icon: 'fab fa-linkedin-in',
+      url: 'https://www.linkedin.com/company/queplan',
+      qr: 'assets/qr/qr-linkedin.svg',
+    },
+  ];
 
   private readonly endpoint = 'https://qptech.app.n8n.cloud/webhook/sheet-data';
   private readonly pollIntervalMs = 5000;
@@ -58,9 +105,10 @@ export class AppComponent {
   isLoading = true;
   hasError = false;
   lastUpdated: Date | null = null;
-  search = '';
-  companyFilter = '';
-  activeView: 'podium' | 'list' = 'podium';
+
+  /** Participantes por pagina en el listado (el podio va aparte). */
+  readonly pageSize = 10;
+  page = 0;
 
   constructor(private _http: HttpClient) {}
 
@@ -86,6 +134,9 @@ export class AppComponent {
         this.rows = this.rank(response.data ?? []);
         this.lastUpdated = new Date();
         this.firstLoad = false;
+        // Si alguien se dio de baja, la ultima pagina puede dejar de existir:
+        // se queda en la ultima valida en vez de mostrar una pagina vacia.
+        this.page = Math.min(this.page, this.totalPages - 1);
       });
   }
 
@@ -94,58 +145,52 @@ export class AppComponent {
     this.destroy$.complete();
   }
 
-  /**
-   * Filas tras buscador y filtro de empresa. El puesto se calcula siempre sobre
-   * el ranking completo: filtrar no reordena, solo esconde.
-   */
-  get visibleRows(): RankedRow[] {
-    const term = this.search.trim().toLowerCase();
-
-    return this.rows.filter((row) => {
-      const matchesCompany =
-        !this.companyFilter || row.company === this.companyFilter;
-      const matchesTerm =
-        !term ||
-        row.name.toLowerCase().includes(term) ||
-        row.company.toLowerCase().includes(term);
-
-      return matchesCompany && matchesTerm;
-    });
+  /** Del cuarto puesto en adelante: los tres primeros ya viven en el podio. */
+  get listRows(): RankedRow[] {
+    return this.rows.slice(3);
   }
 
-  /** Empresas presentes en el ranking, para el desplegable. */
-  get companies(): string[] {
-    const unique = new Set(this.rows.map((row) => row.company).filter(Boolean));
+  /** Los 10 del tramo visible del listado. */
+  get pagedRows(): RankedRow[] {
+    const start = this.page * this.pageSize;
 
-    return [...unique].sort((a, b) => a.localeCompare(b, 'es'));
+    return this.listRows.slice(start, start + this.pageSize);
   }
 
-  get isFiltered(): boolean {
-    return !!this.companyFilter || !!this.search.trim();
+  /** Siempre 1 como minimo: con lista vacia no existe la "pagina 0 de 0". */
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.listRows.length / this.pageSize));
   }
 
-  get companyLabel(): string {
-    return this.companyFilter || 'Todas las empresas';
+  get hasPages(): boolean {
+    return this.listRows.length > this.pageSize;
   }
 
-  onSearch(value: string): void {
-    this.search = value;
+  /** Puesto del primero y del ultimo de la pagina, para el "4 – 13 de 57". */
+  get pageFrom(): number {
+    return this.page * this.pageSize + 4;
   }
 
-  onCompany(value: string): void {
-    this.companyFilter = value;
+  get pageTo(): number {
+    return Math.min(this.pageFrom + this.pageSize - 1, this.rows.length);
   }
 
-  setView(view: 'podium' | 'list'): void {
-    this.activeView = view;
+  goToPage(page: number): void {
+    this.page = Math.min(Math.max(page, 0), this.totalPages - 1);
+  }
+
+  get whatsappUrl(): string {
+    return `https://wa.me/${this.whatsappNumber}?text=${encodeURIComponent(
+      this.whatsappMessage,
+    )}`;
   }
 
   trackByRow(_index: number, row: RankedRow): number {
     return row.id;
   }
 
-  trackByCompany(_index: number, company: string): string {
-    return company;
+  trackBySocial(_index: number, social: SocialLink): string {
+    return social.key;
   }
 
   private rank(data: SheetRow[]): RankedRow[] {
