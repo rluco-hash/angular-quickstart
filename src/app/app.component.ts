@@ -61,7 +61,7 @@ export class AppComponent {
   // TODO: reemplazar por el numero real de WhatsApp de QuePlan.
   private readonly whatsappNumber = '56900000000';
   private readonly whatsappMessage =
-    'Hola QuePlan, quiero saber más del Desafío Bienestar.';
+    'Hola QuePlan, les escribo desde Desafío Bienestar.';
 
   /* Los QR son SVG estaticos generados offline (encoder QR sobre las URLs de
      abajo). Si cambia una URL hay que regenerar el SVG correspondiente. */
@@ -77,9 +77,9 @@ export class AppComponent {
     {
       key: 'instagram',
       label: 'Instagram',
-      detail: '@queplan.cl',
+      detail: '@queplancl',
       icon: 'fab fa-instagram',
-      url: 'https://www.instagram.com/queplan.cl',
+      url: 'https://www.instagram.com/queplancl/',
       qr: 'assets/qr/qr-instagram.svg',
     },
     {
@@ -87,7 +87,7 @@ export class AppComponent {
       label: 'LinkedIn',
       detail: 'QuePlan',
       icon: 'fab fa-linkedin-in',
-      url: 'https://www.linkedin.com/company/queplan',
+      url: 'https://www.linkedin.com/company/queplan.cl/',
       qr: 'assets/qr/qr-linkedin.svg',
     },
   ];

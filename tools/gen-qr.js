@@ -1,9 +1,10 @@
 /* Genera los QR de src/assets/qr como SVG estaticos: sin dependencia en runtime
    ni llamadas a un servicio externo de imagenes.
-   Se corre a mano SOLO si cambia alguna de las URLs de abajo (y hay que
-   mantenerlas iguales a las de `socials` en app.component.ts):
 
      node tools/gen-qr.js
+
+   Las URLs NO se repiten aca: se leen de `socials` en app.component.ts, que es
+   la fuente unica. Cambiar una URL alli y volver a correr esto alcanza.
 
    El encoder viene de qrcode-terminal, que ya esta en node_modules como
    dependencia transitiva; si desaparece: npm i -D qrcode-terminal */
@@ -14,11 +15,25 @@ const root = path.join(__dirname, '..');
 const QRCode = require(path.join(root, 'node_modules/qrcode-terminal/vendor/QRCode'));
 const QRErrorCorrectLevel = require(path.join(root, 'node_modules/qrcode-terminal/vendor/QRCode/QRErrorCorrectLevel'));
 
-const targets = [
-  { file: 'qr-comparador.svg', url: 'https://www.queplan.cl' },
-  { file: 'qr-instagram.svg', url: 'https://www.instagram.com/queplan.cl' },
-  { file: 'qr-linkedin.svg', url: 'https://www.linkedin.com/company/queplan' },
-];
+/** Pares url + archivo de QR tal como estan declarados en el componente. */
+function targetsFromComponent() {
+  const file = path.join(root, 'src/app/app.component.ts');
+  const source = fs.readFileSync(file, 'utf8');
+  const entry = /url:\s*'([^']+)',\s*\n\s*qr:\s*'assets\/qr\/([^']+)'/g;
+  const found = [];
+
+  for (const [, url, name] of source.matchAll(entry)) {
+    found.push({ file: name, url });
+  }
+
+  if (!found.length) {
+    throw new Error(`No encontre pares url/qr en ${file}`);
+  }
+
+  return found;
+}
+
+const targets = targetsFromComponent();
 
 const QUIET = 2; // modulos de margen (el estandar pide 4, 2 basta en pantalla)
 
