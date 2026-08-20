@@ -2,9 +2,10 @@
    ESTILOS
    ============================================================ */
 
-/* Scoreboard editorial: fondo claro, hairlines en vez de cards, y el puntaje
-   como protagonista tipografico. Fuentes ya cargadas por la app: Zalando Sans
-   SemiExpanded para titulos y cifras, Montserrat para parrafos y el resto.
+/* Scoreboard de evento: fondo claro, tarjetas por fila, formas de marca de
+   adorno y el puntaje como protagonista tipografico. Fuentes ya cargadas por la
+   app: Zalando Sans SemiExpanded para titulos y cifras, Montserrat para
+   parrafos y el resto.
 
    Escala tipografica (16px = 1rem), siempre en tamanos PARES:
      10px .625   12px .75    14px .875   16px 1      18px 1.125
@@ -35,81 +36,182 @@
 
   --radius-sm: 4px; /* border-radius.sm */
   --radius-lg: 12px; /* border-radius.lg */
+  /* Radio propio del scoreboard: las tarjetas del ranking y el banner del
+     premio piden mas curva que los 12px del sistema. */
+  --radius-xl: 20px;
   --ink: var(--theme-secondary);
   --ink-soft: var(--theme-secondary-300);
   --accent: var(--theme-primary);
   --accent-deep: var(--theme-primary-700);
   --surface: var(--theme-white);
-  --canvas: #F7F9FC;
+  --canvas: #ffffff;
+  /* Banda de los QR: un gris apenas mas oscuro que el fondo, para cerrar la
+     pagina sin dibujar otra linea. */
+  --band: #f2f5fa;
   --hairline: rgba(19, 54, 96, 0.1);
-  /* Metales del podio: apagados a proposito para convivir con el celeste de
-     marca sobre fondo claro (los tonos saturados quedan chillones en blanco).
-     Solo pintan el numero de puesto y el icono del premio. */
-  --gold: #b8912f;
-  --gold-soft: rgba(184, 145, 47, 0.12);
-  --silver: #7f8c9b;
-  --bronze: #a96f42;
+  /* Metales del podio: saturados lo justo para leerse como oro/plata/bronce
+     sobre blanco sin pelearse con el celeste de marca. */
+  --gold: #e0982f;
+  --gold-soft: rgba(224, 152, 47, 0.12);
+  --silver: var(--theme-secondary-300);
+  --silver-soft: rgba(113, 134, 160, 0.12);
+  --bronze: #d97a34;
+  --bronze-soft: rgba(217, 122, 52, 0.12);
+  /* Relleno de las filas del top 3: celeste de marca muy diluido. */
+  --top-tint: rgba(65, 180, 228, 0.07);
 
+  position: relative;
   display: block;
+  /* Las formas de adorno se salen del ancho a proposito; el recorte tambien
+     evita el scroll horizontal de la banda a 100vw. */
+  overflow-x: hidden;
   min-height: 100vh;
   background: var(--canvas);
   color: var(--ink);
   font-family: "Montserrat", sans-serif;
 }
 
-/* El padding inferior deja aire para el boton flotante de WhatsApp: sin el,
-   tapa la ultima tarjeta al final del scroll. */
+/* Solo para lectores de pantalla: el puesto del top 3 lo dice la medalla, que es
+   un emoji decorativo. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .board {
+  position: relative;
   max-width: 1040px;
   margin: 0 auto;
-  padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 4vw, 2.5rem) 7rem;
+  padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 4vw, 2.5rem) 0;
+}
+
+/* ---------- Formas de marca ---------- */
+
+/* Decorativas y a media opacidad: acompanan el titulo, no compiten con el. */
+.decor {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 22rem;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Separacion al borde: en movil apenas un respiro (el titulo ocupa casi todo el
+   ancho), y de tablet en adelante entran hacia el centro para acompanar al
+   titulo en vez de quedar pegadas a las esquinas. */
+.decor {
+  --decor-inset: 0.5rem;
+}
+
+@media (min-width: 721px) {
+  .decor {
+    --decor-inset: 5vw;
+  }
+}
+
+.decor__arc,
+.decor__cross {
+  position: absolute;
+  display: block;
+  /* Cada forma flota con su propio ritmo: en fase se leerian como un solo
+     bloque moviendose. */
+  animation: decor-float-arc 9s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* El asset es un arco horizontal (2:1) que abre hacia abajo; girado -90deg abre
+   hacia el contenido. Como el giro no cambia la caja de layout, width es el alto
+   VISUAL del semicirculo y el corrimiento del centro se compensa con
+   0.246 = (1 - 1 / 1.97) / 2, siendo 1.97 la proporcion del SVG. */
+.decor__arc {
+  --arc-size: clamp(7rem, 14vw, 11rem);
+
+  top: calc(4.5rem + var(--arc-size) * 0.246);
+  left: calc(var(--decor-inset) - var(--arc-size) * 0.246);
+  width: var(--arc-size);
+  height: auto;
+}
+
+/* El celeste viene pintado dentro del propio SVG, no hace falta color aca. */
+.decor__cross {
+  top: 2.5rem;
+  right: var(--decor-inset);
+  width: clamp(5rem, 10vw, 8rem);
+  height: auto;
+  animation-name: decor-float-cross;
+  animation-duration: 7s;
 }
 
 /* ---------- Cabecera ---------- */
 
-/* Asimetrica a proposito: marca a la izquierda, estado a la derecha. */
 .board__head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  padding-bottom: 1.25rem;
-  border-bottom: 2px solid var(--ink);
+  position: relative;
+  text-align: center;
 }
 
-.board__eyebrow {
-  margin: 0 0 0.35rem;
+.board__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0.4rem 0.9rem;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--ink-soft);
+  color: var(--accent-deep);
+  background: rgba(65, 180, 228, 0.12);
+  border-radius: 100px;
 }
 
 .board__title {
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 0.75rem 0 0;
   font-family: "Zalando Sans SemiExpanded", sans-serif;
-  font-size: clamp(2rem, 6vw, 3.25rem);
-  font-weight: 600;
-  line-height: 0.95;
+  font-size: clamp(2.5rem, 11vw, 5rem);
+  font-weight: 800;
+  line-height: 0.92;
   letter-spacing: -0.02em;
-  color: var(--ink);
+  text-transform: uppercase;
 }
 
-.board__status {
+.board__title-line--accent {
+  color: var(--accent);
+}
+
+.board__lead {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.1rem 0.45rem;
+  margin: 0.75rem 0 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+/* El separador solo existe cuando la linea entra completa: al envolverse
+   quedaba un punto huerfano al final del primer renglon. */
+.board__sep {
+  display: none;
+}
+
+@media (min-width: 600px) {
+  .board__sep {
+    display: inline;
+  }
+}
+
+.board__live {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding-bottom: 0.35rem;
-}
-
-.board__state {
-  margin: 0;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--ink-soft);
+  gap: 0.4rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -130,6 +232,66 @@
   background: var(--theme-warning);
 }
 
+/* ---------- Switch podio / lista ---------- */
+
+.switch {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+}
+
+.switch__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.15rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 100px;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.switch__btn:hover,
+.switch__btn:focus-visible {
+  outline: none;
+  color: var(--accent-deep);
+  border-color: var(--accent);
+}
+
+.switch__btn--on {
+  color: var(--accent-deep);
+  background: rgba(65, 180, 228, 0.1);
+  border-color: var(--accent);
+}
+
+/* ---------- Chip de empresa ---------- */
+
+/* Cuadradito con las iniciales: hace de logo mientras no tengamos los reales. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  padding: 0 0.2rem;
+  font-family: "Zalando Sans SemiExpanded", sans-serif;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--ink-soft);
+  background: var(--theme-dark-50);
+  border-radius: var(--radius-sm);
+}
+
 /* ---------- Podio ---------- */
 
 .podium {
@@ -137,7 +299,7 @@
   align-items: flex-end;
   justify-content: center;
   gap: clamp(0.75rem, 3vw, 1.5rem);
-  padding: 2rem 0 1rem;
+  padding: 2.25rem 0 0.5rem;
 }
 
 .podium__place {
@@ -150,48 +312,26 @@
   text-align: center;
 }
 
-.podium__place--first {
+.podium__place--1 {
   order: 2;
 }
 
-.podium__place--second {
+.podium__place--2 {
   order: 1;
 }
 
-.podium__place--third {
+.podium__place--3 {
   order: 3;
 }
 
-.podium__crown {
+.podium__medal {
   margin-bottom: 0.35rem;
-  font-size: 1.125rem;
-  color: var(--gold);
+  font-size: 1.25rem;
+  line-height: 1;
 }
 
-.podium__badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  margin-bottom: 0.5rem;
-  font-family: "Zalando Sans SemiExpanded", sans-serif;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--theme-white);
-  border-radius: 50%;
-  background: var(--silver);
-}
-
-.podium__place--first .podium__badge {
-  width: 1.75rem;
-  height: 1.75rem;
-  font-size: 0.875rem;
-  background: var(--gold);
-}
-
-.podium__place--third .podium__badge {
-  background: var(--bronze);
+.podium__place--1 .podium__medal {
+  font-size: 1.5rem;
 }
 
 .podium__avatar {
@@ -201,6 +341,7 @@
   width: 3.5rem;
   height: 3.5rem;
   margin-bottom: 0.6rem;
+  font-family: "Zalando Sans SemiExpanded", sans-serif;
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--accent-deep);
@@ -209,18 +350,24 @@
   border-radius: 50%;
 }
 
-.podium__place--first .podium__avatar {
+.podium__place--1 .podium__avatar {
   width: 4.5rem;
   height: 4.5rem;
   font-size: 1rem;
+  color: var(--gold);
+  background: var(--gold-soft);
   border-color: var(--gold);
 }
 
-.podium__place--second .podium__avatar {
+.podium__place--2 .podium__avatar {
+  color: var(--silver);
+  background: var(--silver-soft);
   border-color: var(--silver);
 }
 
-.podium__place--third .podium__avatar {
+.podium__place--3 .podium__avatar {
+  color: var(--bronze);
+  background: var(--bronze-soft);
   border-color: var(--bronze);
 }
 
@@ -229,7 +376,7 @@
   overflow: hidden;
   font-family: "Zalando Sans SemiExpanded", sans-serif;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.2;
   color: var(--ink);
   text-overflow: ellipsis;
@@ -237,50 +384,89 @@
   max-width: 100%;
 }
 
-.podium__place--first .podium__name {
+.podium__place--1 .podium__name {
   font-size: 1rem;
 }
 
 .podium__company {
-  margin: 0.15rem 0 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  margin: 0.3rem 0 0.75rem;
   overflow: hidden;
-  font-size: 0.625rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--ink-soft);
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
 }
 
+/* Pedestal: solo la cifra y su unidad, con el alto contando el puesto. */
 .podium__score {
+  --metal-tint: var(--silver-soft);
+
+  position: relative;
+  /* Contiene el z-index del ::before: el fondo queda detras del texto sin
+     escaparse al fondo de la pagina. */
+  isolation: isolate;
   display: flex;
-  align-items: baseline;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 0.3rem;
+  gap: 0.1rem;
   width: 100%;
-  min-height: 4rem;
-  padding: 0.6rem 0.5rem;
+  min-height: 4.5rem;
+  margin: 0;
+  padding: 0.7rem 0.5rem;
+}
+
+/* El fondo y el borde viven en el pseudo para poder difuminarlos hacia abajo
+   con una mascara sin arrastrar la cifra: el pedestal se disuelve en el fondo
+   en vez de cortarse en seco. */
+.podium__score::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--metal-tint);
+  border: 1px solid var(--hairline);
+  border-bottom: none;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  -webkit-mask-image: linear-gradient(to bottom, #000 30%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 30%, transparent 100%);
+}
+
+.podium__points {
   font-family: "Zalando Sans SemiExpanded", sans-serif;
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 700;
+  line-height: 1;
   color: var(--ink);
-  background: var(--surface);
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   font-variant-numeric: tabular-nums;
 }
 
-.podium__place--first .podium__score {
-  min-height: 6rem;
-  font-size: 1.75rem;
-  background: var(--gold-soft);
+.podium__place--1 .podium__score {
+  --metal-tint: var(--gold-soft);
+
+  min-height: 6.5rem;
 }
 
-.podium__place--third .podium__score {
-  min-height: 3.5rem;
+.podium__place--1 .podium__points {
+  font-size: 1.75rem;
+  color: var(--gold);
+}
+
+.podium__place--3 .podium__score {
+  --metal-tint: var(--bronze-soft);
+
+  min-height: 4rem;
+}
+
+.podium__place--3 .podium__points {
   font-size: 1.125rem;
+  color: var(--bronze);
 }
 
 @media (max-width: 720px) {
@@ -293,55 +479,97 @@
     height: 2.75rem;
   }
 
-  .podium__place--first .podium__avatar {
+  .podium__place--1 .podium__avatar {
     width: 3.5rem;
     height: 3.5rem;
   }
 
   .podium__score {
-    min-height: 3rem;
+    min-height: 3.5rem;
+  }
+
+  .podium__points {
     font-size: 1rem;
   }
 
-  .podium__place--first .podium__score {
-    min-height: 4.5rem;
+  .podium__place--1 .podium__score {
+    min-height: 5rem;
+  }
+
+  .podium__place--1 .podium__points {
     font-size: 1.375rem;
   }
 
-  .podium__place--third .podium__score {
-    min-height: 2.75rem;
+  .podium__place--3 .podium__score {
+    min-height: 3rem;
+  }
+
+  .podium__place--3 .podium__points {
     font-size: 0.875rem;
   }
 }
 
 /* ---------- Lista ---------- */
 
+.board__cols {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.75rem;
+  padding: 1rem 1.15rem 0.75rem;
+  border-top: 1px solid var(--hairline);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
 .board__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 .entry {
+  --card-bg: var(--surface);
+
   display: grid;
-  grid-template-columns: 2.5rem 2.5rem minmax(0, 1fr) auto;
+  grid-template-columns: 2.25rem 2.5rem minmax(0, 1fr) auto;
   align-items: center;
   gap: clamp(0.75rem, 2vw, 1.25rem);
-  padding: 0.9rem 0.25rem;
-  border-bottom: 1px solid var(--hairline);
+  padding: 0.85rem 1.15rem;
+  background: var(--card-bg);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-xl);
   /* Entrada escalonada; con track por id solo corre en las filas nuevas. */
   animation: entry-in 0.45s cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
   animation-delay: calc(var(--i, 0) * 28ms);
 }
 
-/* Puesto: la cifra manda, sin medallas ni emojis. */
-.entry__position {
+/* Top 3: mismas filas, resaltadas con el celeste de marca. */
+.entry--top {
+  --card-bg: var(--top-tint);
+
+  border-color: rgba(65, 180, 228, 0.35);
+}
+
+.entry__rank {
   font-family: "Zalando Sans SemiExpanded", sans-serif;
-  font-size: 1.125rem;
-  font-weight: 500;
-  text-align: right;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: center;
   font-variant-numeric: tabular-nums;
-  color: var(--theme-dark-300);
+  color: var(--theme-dark-400);
+}
+
+.entry__medal {
+  font-size: 1.125rem;
+  line-height: 1;
 }
 
 .entry__avatar {
@@ -351,11 +579,26 @@
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
+  font-family: "Zalando Sans SemiExpanded", sans-serif;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: var(--accent-deep);
-  background: rgba(65, 180, 228, 0.12);
+  color: var(--theme-white);
+  background: var(--ink);
+  border: 2px solid transparent;
+}
+
+/* El aro del avatar repite el metal del puesto: el color hace de medalla. */
+.entry--top-1 .entry__avatar {
+  border-color: var(--gold);
+}
+
+.entry--top-2 .entry__avatar {
+  border-color: var(--silver);
+}
+
+.entry--top-3 .entry__avatar {
+  border-color: var(--bronze);
 }
 
 .entry__identity {
@@ -369,20 +612,25 @@
   margin: 0;
   font-family: "Zalando Sans SemiExpanded", sans-serif;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.2;
   color: var(--ink);
+}
+
+.entry__name-text {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .entry__company {
-  margin: 0.15rem 0 0;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0.3rem 0 0;
   font-size: 0.75rem;
   font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--ink-soft);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -392,6 +640,7 @@
 /* Cambio de puesto desde el poll anterior. */
 .entry__delta {
   flex: 0 0 auto;
+  font-family: "Montserrat", sans-serif;
   font-size: 0.625rem;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -414,40 +663,42 @@
   background: rgba(65, 180, 228, 0.14);
 }
 
+/* Cifra arriba y unidad debajo: la columna de puntajes se lee de un barrido. */
 .entry__score {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.1rem;
+  margin: 0;
   text-align: right;
 }
 
 .entry__points {
-  margin: 0;
   font-family: "Zalando Sans SemiExpanded", sans-serif;
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1;
   letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
   color: var(--ink);
 }
 
-/* Unidad pegada a la cifra, en minuscula y liviana: acompana, no compite. */
-.entry__unit {
-  margin-left: 0.3rem;
+.entry--top-1 .entry__points {
+  color: var(--gold);
+}
+
+.entry--top-3 .entry__points {
+  color: var(--bronze);
+}
+
+/* Unidad en minuscula y liviana: acompana a la cifra, no compite. */
+.unit {
   font-family: "Montserrat", sans-serif;
   font-size: 0.625rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink-soft);
-}
-
-.entry__breakdown {
-  margin: 0.3rem 0 0;
-  font-size: 0.625rem;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  color: var(--ink-soft);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
 }
 
 /* ---------- Paginador ---------- */
@@ -462,7 +713,7 @@
   flex-wrap: wrap;
   max-width: 32rem;
   margin: 0 auto;
-  padding: 1.25rem 0.25rem 0;
+  padding: 1.5rem 0.25rem 0;
 }
 
 .pager__btn {
@@ -528,7 +779,7 @@
   animation: entry-scored 1.8s ease-out;
 }
 
-/* ---------- Estados y pie ---------- */
+/* ---------- Estados ---------- */
 
 .board__empty {
   padding: 4rem 1rem;
@@ -540,83 +791,99 @@
 /* ---------- Premio ---------- */
 
 .prize {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 2rem;
-  padding: 1.15rem 1.35rem;
-  background: var(--surface);
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+  margin-top: 2.5rem;
+  padding: clamp(1.75rem, 5vw, 2.75rem) clamp(1.25rem, 5vw, 3.5rem);
+  text-align: center;
+  background: linear-gradient(135deg, #0e2c4e 0%, #1a4674 55%, #133660 100%);
+  border-radius: var(--radius-xl);
 }
 
-.prize__icon {
-  flex: 0 0 auto;
+/* Halo y regalo: adornos del banner, siempre por detras del texto. */
+.prize__glow {
+  position: absolute;
+  top: -6rem;
+  right: -4rem;
+  width: 16rem;
+  height: 16rem;
+  border-radius: 50%;
+  background: rgba(65, 180, 228, 0.14);
+}
+
+.prize__gift {
+  position: absolute;
+  bottom: -0.5rem;
+  left: 1rem;
+  font-size: 4.5rem;
+  color: rgba(255, 255, 255, 0.07);
+}
+
+.prize__badge,
+.prize__title,
+.prize__detail,
+.prize__raffle {
+  position: relative;
+}
+
+.prize__badge {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 50%;
-  font-size: 1.125rem;
-  color: var(--gold);
-  background: var(--gold-soft);
-}
-
-.prize__copy {
-  min-width: 0;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: rgba(65, 180, 228, 0.16);
+  border-radius: 100px;
 }
 
 .prize__title {
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 1rem 0 0;
   font-family: "Zalando Sans SemiExpanded", sans-serif;
-  font-size: 0.875rem;
-  font-weight: 600;
-  line-height: 1.2;
-  color: var(--ink);
+  font-size: clamp(1.5rem, 6vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--theme-white);
+}
+
+.prize__title-line--accent {
+  color: var(--accent);
 }
 
 .prize__detail {
-  margin: 0.2rem 0 0;
-  font-size: 0.75rem;
+  max-width: 34rem;
+  margin: 1rem auto 0;
+  font-size: 0.875rem;
   font-weight: 500;
-  line-height: 1.35;
-  color: var(--ink-soft);
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.75);
 }
 
-/* Fecha del sorteo: dato con fecha, se marca en celeste de marca para que no se
-   lea como una linea mas de la letra chica del premio. */
+.prize__detail strong {
+  font-weight: 700;
+  color: var(--theme-white);
+}
+
+/* Fecha del sorteo: dato con fecha, se marca aparte para que no se lea como una
+   linea mas de la letra chica del premio. */
 .prize__raffle {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  margin: 0.5rem 0 0;
-  padding: 0.25rem 0.6rem;
+  margin: 1.25rem 0 0;
+  padding: 0.35rem 0.85rem;
   font-size: 0.75rem;
   font-weight: 600;
-  line-height: 1.35;
-  color: var(--accent-deep);
-  background: rgba(65, 180, 228, 0.12);
+  color: var(--theme-white);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 100px;
-}
-
-.prize__marks {
-  flex: 0 0 auto;
-  display: inline-flex;
-  gap: 0.4rem;
-  margin-left: auto;
-}
-
-.prize__marks i {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.875rem;
-  color: var(--accent-deep);
-  background: rgba(65, 180, 228, 0.1);
 }
 
 .board__foot {
@@ -634,10 +901,18 @@
 
 /* ---------- Redes y contacto ---------- */
 
+/* Banda de ancho completo: cierra la pagina. El margen negativo la saca del
+   contenedor centrado (el recorte del :host evita el scroll horizontal). El
+   padding inferior deja aire para el flotante de WhatsApp. */
 .social {
-  margin-top: 2.5rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--hairline);
+  margin: 3rem calc(50% - 50vw) 0;
+  padding: 2.5rem clamp(1rem, 4vw, 2.5rem) 8rem;
+  background: var(--band);
+}
+
+.social__inner {
+  max-width: 1040px;
+  margin: 0 auto;
 }
 
 .social__head {
@@ -648,7 +923,7 @@
   margin: 0;
   font-family: "Zalando Sans SemiExpanded", sans-serif;
   font-size: 1.125rem;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--ink);
 }
@@ -780,6 +1055,30 @@
   }
 }
 
+/* Flotado de las formas: recorrido corto y lento, mas un giro minimo para que
+   no se lea como un simple sube y baja. */
+/* El -90deg del arco es su giro de base, no parte del flotado: va en los dos
+   pasos para que la animacion no lo pise. */
+@keyframes decor-float-arc {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-90deg);
+  }
+  50% {
+    transform: translate3d(0.5rem, -1.5rem, 0) rotate(-95deg);
+  }
+}
+
+@keyframes decor-float-cross {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(-0.75rem, 1.25rem, 0) rotate(9deg);
+  }
+}
+
 @keyframes entry-in {
   from {
     opacity: 0;
@@ -791,12 +1090,13 @@
   }
 }
 
+/* Vuelve al fondo propio de la fila (blanco o el tinte del top 3). */
 @keyframes entry-scored {
   0% {
-    background: rgba(65, 180, 228, 0.22);
+    background-color: rgba(65, 180, 228, 0.28);
   }
   100% {
-    background: transparent;
+    background-color: var(--card-bg);
   }
 }
 
@@ -804,17 +1104,18 @@
 
 @media (max-width: 720px) {
   .entry {
-    grid-template-columns: 2rem 2.25rem minmax(0, 1fr) auto;
-    gap: 0.75rem;
+    grid-template-columns: 1.75rem 2.25rem minmax(0, 1fr) auto;
+    gap: 0.6rem;
+    padding: 0.8rem 0.9rem;
   }
 
-  .entry__breakdown {
-    display: none;
+  .board__cols {
+    padding-inline: 0.9rem;
   }
 
-  /* Los sellos del premio son decorativos: se van antes que el texto. */
-  .prize__marks {
-    display: none;
+  /* La banda de adornos tapa parte del titulo en pantallas chicas. */
+  .decor {
+    opacity: 0.5;
   }
 
   /* Los dos botones arriba y el estado abajo: en una sola linea no caben y el
@@ -844,6 +1145,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .board__pulse,
+  .decor__arc,
+  .decor__cross,
   .entry,
   .entry--scored {
     animation: none;

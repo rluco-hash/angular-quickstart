@@ -27,6 +27,10 @@ interface RankedRow {
   name: string;
   company: string;
   initials: string;
+  /** Iniciales de la empresa para el chip que acompana al nombre. */
+  companyInitials: string;
+  /** Medalla del puesto (vacia del cuarto en adelante). */
+  medal: string;
   dados: number;
   raspe: number;
   total: number;
@@ -52,6 +56,13 @@ interface SocialLink {
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
+  /** Medallas del podio, indexadas por puesto. */
+  private static readonly medals: Record<number, string> = {
+    1: '🥇',
+    2: '🥈',
+    3: '🥉',
+  };
+
   title = 'angular-quickstart';
   iframeUrl: { default?: SafeResourceUrl; community?: SafeResourceUrl } = {};
 
@@ -105,9 +116,13 @@ export class AppComponent {
   hasError = false;
   lastUpdated: Date | null = null;
 
-  /** Participantes por pagina en el listado (el podio va aparte). */
+  /** Participantes por pagina en el listado. */
   readonly pageSize = 10;
   page = 0;
+
+  /* El podio y la lista muestran los mismos datos: 'lista' solo oculta el podio
+     para dejar el ranking plano de corrido. */
+  view: 'podio' | 'lista' = 'podio';
 
   constructor(private _http: HttpClient) {}
 
@@ -144,34 +159,46 @@ export class AppComponent {
     this.destroy$.complete();
   }
 
-  /** Del cuarto puesto en adelante: los tres primeros ya viven en el podio. */
-  get listRows(): RankedRow[] {
-    return this.rows.slice(3);
+  /** Los tres del podio, ya ordenados por puntaje. */
+  get podiumRows(): RankedRow[] {
+    return this.rows.slice(0, 3);
   }
 
-  /** Los 10 del tramo visible del listado. */
+  /** Los 10 del tramo visible del listado (que arranca en el primer puesto). */
   get pagedRows(): RankedRow[] {
     const start = this.page * this.pageSize;
 
-    return this.listRows.slice(start, start + this.pageSize);
+    return this.rows.slice(start, start + this.pageSize);
   }
 
   /** Siempre 1 como minimo: con lista vacia no existe la "pagina 0 de 0". */
   get totalPages(): number {
-    return Math.max(1, Math.ceil(this.listRows.length / this.pageSize));
+    return Math.max(1, Math.ceil(this.rows.length / this.pageSize));
   }
 
   get hasPages(): boolean {
-    return this.listRows.length > this.pageSize;
+    return this.rows.length > this.pageSize;
   }
 
-  /** Puesto del primero y del ultimo de la pagina, para el "4 – 13 de 57". */
+  /** Puesto del primero y del ultimo de la pagina, para el "1 – 10 de 57". */
   get pageFrom(): number {
-    return this.page * this.pageSize + 4;
+    return this.page * this.pageSize + 1;
   }
 
   get pageTo(): number {
     return Math.min(this.pageFrom + this.pageSize - 1, this.rows.length);
+  }
+
+  setView(view: 'podio' | 'lista'): void {
+    this.view = view;
+  }
+
+  /* El desglose ya no ocupa lugar en la fila (el disenio la deja limpia): vive
+     en el title, a un hover de distancia. */
+  breakdownOf(row: RankedRow): string {
+    return `Dados ${row.dados.toLocaleString('es-CL')} · Raspe ${row.raspe.toLocaleString(
+      'es-CL',
+    )}`;
   }
 
   goToPage(page: number): void {
@@ -199,6 +226,7 @@ export class AppComponent {
 
     const ranked = ordered.map((row, index) => {
       const position = index + 1;
+      const company = (row['Nombre Empresa'] || '').trim();
       const total = Number(row.Total) || 0;
       const previousPosition = this.previousPositions.get(row.row_number);
       const previousTotal = this.previousTotals.get(row.row_number);
@@ -207,8 +235,10 @@ export class AppComponent {
         id: row.row_number,
         position,
         name: (row['Nombre completo'] || '').trim() || 'Participante',
-        company: (row['Nombre Empresa'] || '').trim(),
+        company,
         initials: this.initialsOf(row['Nombre completo']),
+        companyInitials: this.initialsOf(company),
+        medal: AppComponent.medals[position] ?? '',
         dados: Number(row['Puntaje Dados']) || 0,
         raspe: Number(row['Puntaje Raspe']) || 0,
         total,
