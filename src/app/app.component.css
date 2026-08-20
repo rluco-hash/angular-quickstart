@@ -3,8 +3,8 @@
    ============================================================ */
 
 /* Scoreboard editorial: fondo claro, hairlines en vez de cards, y el puntaje
-   como protagonista tipografico. Fuentes ya cargadas por la app: Unbounded para
-   las cifras, Zalando Sans SemiExpanded para nombres, Montserrat para el resto.
+   como protagonista tipografico. Fuentes ya cargadas por la app: Zalando Sans
+   SemiExpanded para titulos y cifras, Montserrat para parrafos y el resto.
 
    Escala tipografica (16px = 1rem), siempre en tamanos PARES:
      10px .625   12px .75    14px .875   16px 1      18px 1.125
@@ -89,7 +89,7 @@
 
 .board__title {
   margin: 0;
-  font-family: "Unbounded", sans-serif;
+  font-family: "Zalando Sans SemiExpanded", sans-serif;
   font-size: clamp(2rem, 6vw, 3.25rem);
   font-weight: 600;
   line-height: 0.95;
@@ -175,7 +175,7 @@
   width: 1.5rem;
   height: 1.5rem;
   margin-bottom: 0.5rem;
-  font-family: "Unbounded", sans-serif;
+  font-family: "Zalando Sans SemiExpanded", sans-serif;
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--theme-white);
@@ -262,7 +262,7 @@
   width: 100%;
   min-height: 4rem;
   padding: 0.6rem 0.5rem;
-  font-family: "Unbounded", sans-serif;
+  font-family: "Zalando Sans SemiExpanded", sans-serif;
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--ink);
@@ -336,7 +336,7 @@
 
 /* Puesto: la cifra manda, sin medallas ni emojis. */
 .entry__position {
-  font-family: "Unbounded", sans-serif;
+  font-family: "Zalando Sans SemiExpanded", sans-serif;
   font-size: 1.125rem;
   font-weight: 500;
   text-align: right;
@@ -420,7 +420,7 @@
 
 .entry__points {
   margin: 0;
-  font-family: "Unbounded", sans-serif;
+  font-family: "Zalando Sans SemiExpanded", sans-serif;
   font-size: 1.25rem;
   font-weight: 600;
   line-height: 1;
@@ -646,7 +646,7 @@
 
 .social__title {
   margin: 0;
-  font-family: "Unbounded", sans-serif;
+  font-family: "Zalando Sans SemiExpanded", sans-serif;
   font-size: 1.125rem;
   font-weight: 500;
   letter-spacing: -0.01em;
