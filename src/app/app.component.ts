@@ -58,8 +58,7 @@ export class AppComponent {
   /** Fecha del sorteo, anunciada junto al premio. */
   readonly raffleDate = '1 de septiembre';
 
-  // TODO: reemplazar por el numero real de WhatsApp de QuePlan.
-  private readonly whatsappNumber = '56900000000';
+  private readonly whatsappNumber = '56971502877';
   private readonly whatsappMessage =
     'Hola QuePlan, les escribo desde Desafío Bienestar.';
 
