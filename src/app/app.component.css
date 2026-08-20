@@ -168,12 +168,18 @@
   border-radius: 100px;
 }
 
+/* Una sola linea, con wrap solo como red de seguridad en pantallas muy
+   angostas. El tamano en movil lo manda el hueco que dejan las formas de marca
+   a los costados, no el ancho del contenedor. */
 .board__title {
   display: flex;
-  flex-direction: column;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0 0.3em;
   margin: 0.75rem 0 0;
   font-family: "Zalando Sans SemiExpanded", sans-serif;
-  font-size: clamp(2.5rem, 11vw, 5rem);
+  font-size: clamp(1.75rem, 7.5vw, 5rem);
   font-weight: 800;
   line-height: 0.92;
   letter-spacing: -0.02em;
@@ -1004,7 +1010,8 @@
 /* ---------- Boton flotante de WhatsApp ---------- */
 
 /* Unico boton solido de la pantalla: es la unica accion que pedimos. Va fijo
-   abajo a la derecha, sobre el scroll. */
+   abajo a la derecha, sobre el scroll. En reposo es solo el icono (circulo) y se
+   abre al hover; el ancho lo define el contenido, no una medida fija. */
 .chat {
   position: fixed;
   right: clamp(1rem, 3vw, 2rem);
@@ -1012,8 +1019,10 @@
   z-index: 900;
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.9rem 1.35rem;
+  /* El aire hasta el texto lo pone el margin del label: un gap fijo dejaria el
+     hueco tambien con el boton cerrado. */
+  gap: 0;
+  padding: 0.9rem;
   font-family: inherit;
   font-size: 0.875rem;
   font-weight: 600;
@@ -1024,13 +1033,30 @@
   border-radius: 100px;
   box-shadow: 0 10px 24px rgba(19, 54, 96, 0.22);
   transition:
-    filter 0.15s ease,
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
+    filter 0.3s ease,
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .chat i {
+  /* Cuadrado explicito: el glifo es mas angosto que alto y el boton cerrado
+     quedaba ovalado. */
+  width: 1.5rem;
   font-size: 1.5rem;
+  text-align: center;
+}
+
+/* max-width y no display/width: son animables, y con el texto en nowrap el
+   boton crece justo lo que mide la frase. */
+.chat__label {
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  transition:
+    max-width 0.4s cubic-bezier(0.22, 0.7, 0.3, 1),
+    margin-left 0.4s cubic-bezier(0.22, 0.7, 0.3, 1),
+    opacity 0.25s ease;
 }
 
 .chat:hover,
@@ -1039,6 +1065,16 @@
   filter: brightness(0.94);
   transform: translateY(-2px);
   box-shadow: 0 14px 28px rgba(37, 211, 102, 0.35);
+}
+
+.chat:hover .chat__label,
+.chat:focus-visible .chat__label {
+  max-width: 10rem;
+  margin-left: 0.6rem;
+  /* El texto entra un poco despues de que el boton empezo a abrir: aparecer
+     junto al ancho se lee como un salto. */
+  opacity: 1;
+  transition-delay: 0s, 0s, 0.1s;
 }
 
 /* ---------- Animaciones ---------- */
@@ -1118,6 +1154,24 @@
     opacity: 0.5;
   }
 
+  /* El tracking ancho del badge lo estiraba casi de borde a borde y lo dejaba
+     debajo de la cruz. */
+  .board__badge {
+    font-size: 0.625rem;
+    letter-spacing: 0.12em;
+  }
+
+  /* Con el titulo en una linea el hueco del medio es lo que manda: las formas se
+     encogen y la cruz sube a la esquina, por encima del renglon del titulo. */
+  .decor__arc {
+    --arc-size: 5rem;
+  }
+
+  .decor__cross {
+    top: 0.25rem;
+    width: 3.5rem;
+  }
+
   /* Los dos botones arriba y el estado abajo: en una sola linea no caben y el
      wrap los dejaba desalineados. */
   .pager {
@@ -1129,15 +1183,9 @@
     flex: 1 0 100%;
   }
 
-  /* En pantalla chica el boton se reduce al icono: el texto se comia el ancho
-     de la fila que queda debajo. El aria-label sigue nombrandolo. */
-  .chat {
-    width: 3.5rem;
-    height: 3.5rem;
-    padding: 0;
-    justify-content: center;
-  }
-
+  /* Sin hover real en tactil el boton nunca se abriria, y un tap podria dejarlo
+     abierto a medias: en pantalla chica el texto no existe. El aria-label sigue
+     nombrandolo. */
   .chat__label {
     display: none;
   }
@@ -1150,5 +1198,10 @@
   .entry,
   .entry--scored {
     animation: none;
+  }
+
+  .chat,
+  .chat__label {
+    transition: none;
   }
 }
