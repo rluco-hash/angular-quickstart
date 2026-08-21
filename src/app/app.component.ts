@@ -11,6 +11,11 @@ import {
   timer,
 } from 'rxjs';
 
+/* Participantes falsos para QA de disenio: se usan o no segun la linea marcada
+   en fetchSheet(). El import puede quedar ahi en los dos casos; con la linea
+   comentada el bundler deja el JSON afuera (main.js pasa de ~130 a ~126 kB). */
+import * as MOCK_SHEET_DATA from './mock-sheet-data.json';
+
 interface SheetRow {
   row_number: number;
   'Marca temporal': string;
@@ -111,6 +116,8 @@ export class AppComponent {
     },
   ];
 
+  /* Vacio a proposito (ver DATOS DE PRUEBA en fetchSheet): mientras el mock
+     este activo esta URL no se usa. */
   private readonly endpoint =''
   private readonly pollIntervalMs = 60000;
   private readonly destroy$ = new Subject<void>();
@@ -159,9 +166,23 @@ export class AppComponent {
       });
   }
 
-  /* Fuente del poll, aparte del ngOnInit: el error de red se resuelve aca
-     (null) y arriba solo queda el manejo del dato. */
+  /* Fuente del poll.
+
+     ==========================================================================
+     DATOS DE PRUEBA ACTIVOS: la pantalla se llena con los 11 participantes
+     falsos de mock-sheet-data.json y NO se le pega a ningun endpoint.
+
+     Para volver al endpoint real hay que hacer dos cosas:
+       1. comentar la linea marcada aca abajo (la del `of(MOCK_SHEET_DATA)`);
+       2. poner de vuelta la URL en `endpoint`, que hoy esta en ''.
+     Con solo el paso 1 la pantalla queda vacia y en "Sin conexion".
+     ========================================================================== */
   private fetchSheet(): Observable<SheetResponse | null> {
+    // >>> COMENTAR ESTA LINEA para usar el endpoint real <<<
+    return of(MOCK_SHEET_DATA as SheetResponse);
+
+    // Queda inalcanzable mientras la linea de arriba siga activa: es a proposito,
+    // asi el cambio de una fuente a la otra es comentar/descomentar y nada mas.
     return this._http
       .get<SheetResponse>(this.endpoint)
       .pipe(catchError(() => of(null)));
