@@ -95,7 +95,7 @@
 .decor {
   position: absolute;
   inset: 0 0 auto;
-  height: 22rem;
+  height: 18rem;
   overflow: hidden;
   pointer-events: none;
 }
@@ -105,11 +105,18 @@
    titulo en vez de quedar pegadas a las esquinas. */
 .decor {
   --decor-inset: 0.5rem;
+  /* Alto visual al que arranca cada forma. Se quedan en la banda del titulo, que
+     es lo unico que existe en las dos vistas: en "lista" no hay podio y todo
+     sube, asi que cualquier forma mas abajo se come el listado. */
+  --arc-top: 7.5rem;
+  --cross-top: 0.25rem;
 }
 
 @media (min-width: 721px) {
   .decor {
     --decor-inset: 5vw;
+    --arc-top: 3.5rem;
+    --cross-top: 4rem;
   }
 }
 
@@ -128,9 +135,9 @@
    VISUAL del semicirculo y el corrimiento del centro se compensa con
    0.246 = (1 - 1 / 1.97) / 2, siendo 1.97 la proporcion del SVG. */
 .decor__arc {
-  --arc-size: clamp(7rem, 14vw, 11rem);
+  --arc-size: clamp(5rem, 11vw, 8rem);
 
-  top: calc(4.5rem + var(--arc-size) * 0.246);
+  top: calc(var(--arc-top) + var(--arc-size) * 0.246);
   left: calc(var(--decor-inset) - var(--arc-size) * 0.246);
   width: var(--arc-size);
   height: auto;
@@ -138,9 +145,9 @@
 
 /* El celeste viene pintado dentro del propio SVG, no hace falta color aca. */
 .decor__cross {
-  top: 2.5rem;
+  top: var(--cross-top);
   right: var(--decor-inset);
-  width: clamp(5rem, 10vw, 8rem);
+  width: clamp(3.75rem, 8vw, 6.5rem);
   height: auto;
   animation-name: decor-float-cross;
   animation-duration: 7s;
@@ -179,7 +186,7 @@
   gap: 0 0.3em;
   margin: 0.75rem 0 0;
   font-family: "Zalando Sans SemiExpanded", sans-serif;
-  font-size: clamp(1.75rem, 7.5vw, 5rem);
+  font-size: clamp(1.5rem, 4.5vw, 3rem);
   font-weight: 800;
   line-height: 0.92;
   letter-spacing: -0.02em;
@@ -279,25 +286,6 @@
   border-color: var(--accent);
 }
 
-/* ---------- Chip de empresa ---------- */
-
-/* Cuadradito con las iniciales: hace de logo mientras no tengamos los reales. */
-.chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.125rem;
-  height: 1.125rem;
-  padding: 0 0.2rem;
-  font-family: "Zalando Sans SemiExpanded", sans-serif;
-  font-size: 0.625rem;
-  font-weight: 600;
-  letter-spacing: 0;
-  color: var(--ink-soft);
-  background: var(--theme-dark-50);
-  border-radius: var(--radius-sm);
-}
-
 /* ---------- Podio ---------- */
 
 .podium {
@@ -331,50 +319,13 @@
 }
 
 .podium__medal {
-  margin-bottom: 0.35rem;
-  font-size: 1.25rem;
+  margin-bottom: 0.45rem;
+  font-size: 2rem;
   line-height: 1;
 }
 
 .podium__place--1 .podium__medal {
-  font-size: 1.5rem;
-}
-
-.podium__avatar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 3.5rem;
-  height: 3.5rem;
-  margin-bottom: 0.6rem;
-  font-family: "Zalando Sans SemiExpanded", sans-serif;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--accent-deep);
-  background: rgba(65, 180, 228, 0.12);
-  border: 2px solid transparent;
-  border-radius: 50%;
-}
-
-.podium__place--1 .podium__avatar {
-  width: 4.5rem;
-  height: 4.5rem;
-  font-size: 1rem;
-  color: var(--gold);
-  background: var(--gold-soft);
-  border-color: var(--gold);
-}
-
-.podium__place--2 .podium__avatar {
-  color: var(--silver);
-  background: var(--silver-soft);
-  border-color: var(--silver);
-}
-
-.podium__place--3 .podium__avatar {
-  color: var(--bronze);
-  background: var(--bronze-soft);
-  border-color: var(--bronze);
+  font-size: 2.5rem;
 }
 
 .podium__name {
@@ -395,11 +346,8 @@
 }
 
 .podium__company {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
   margin: 0.3rem 0 0.75rem;
+  text-align: center;
   overflow: hidden;
   font-size: 0.75rem;
   font-weight: 500;
@@ -478,16 +426,6 @@
 @media (max-width: 720px) {
   .podium {
     gap: 0.5rem;
-  }
-
-  .podium__avatar {
-    width: 2.75rem;
-    height: 2.75rem;
-  }
-
-  .podium__place--1 .podium__avatar {
-    width: 3.5rem;
-    height: 3.5rem;
   }
 
   .podium__score {
@@ -631,9 +569,6 @@
 }
 
 .entry__company {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
   margin: 0.3rem 0 0;
   font-size: 0.75rem;
   font-weight: 500;
@@ -977,6 +912,47 @@
   box-shadow: 0 12px 24px rgba(19, 54, 96, 0.1);
 }
 
+/* Circulo con el logo de la plataforma: el elemento mas llamativo de la
+   tarjeta. Cada red trae su propio color de marca. */
+.social__badge {
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--accent-deep);
+  box-shadow: 0 6px 14px rgba(19, 54, 96, 0.18);
+  transition: transform 0.15s ease;
+}
+
+.social__badge i {
+  font-size: 1.65rem;
+  line-height: 1;
+}
+
+/* La lupa QP ya viene en blanco y celeste de marca: se apoya en el fondo
+   oscuro del badge, no se recolorea. */
+.social__badge-img {
+  width: auto;
+  height: 1.9rem;
+}
+
+.social__card:hover .social__badge,
+.social__card:focus-visible .social__badge {
+  transform: scale(1.08);
+}
+
+.social__card--instagram .social__badge {
+  background: linear-gradient(135deg, #f9ce34, #ee2a7b 55%, #6228d7);
+  box-shadow: 0 6px 14px rgba(238, 42, 123, 0.28);
+}
+
+.social__card--linkedin .social__badge {
+  background: #0a66c2;
+  box-shadow: 0 6px 14px rgba(10, 102, 194, 0.28);
+}
+
 /* El QR ya trae su propio margen blanco (quiet zone) dentro del SVG. */
 .social__qr {
   width: 8rem;
@@ -986,18 +962,10 @@
 }
 
 .social__name {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
   font-family: "Zalando Sans SemiExpanded", sans-serif;
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--ink);
-}
-
-.social__name i {
-  font-size: 1rem;
-  color: var(--accent);
 }
 
 .social__detail {
@@ -1168,7 +1136,6 @@
   }
 
   .decor__cross {
-    top: 0.25rem;
     width: 3.5rem;
   }
 

@@ -15,8 +15,8 @@
 
     <!-- Dos lineas y dos colores: el titulo es el bloque grafico de la pantalla. -->
     <h1 class="board__title">
-      <span class="board__title-line">Score</span>
-      <span class="board__title-line board__title-line--accent">Board</span>
+      <span class="board__title-line">La empresa más</span>
+      <span class="board__title-line board__title-line--accent">bacán</span>
     </h1>
 
     <p class="board__lead">
@@ -58,12 +58,8 @@
     <article class="podium__place" *ngFor="let row of podiumRows; trackBy: trackByRow"
       [ngClass]="'podium__place--' + row.position">
       <span class="podium__medal" aria-hidden="true">{{ row.medal }}</span>
-      <span class="podium__avatar" aria-hidden="true">{{ row.initials }}</span>
       <p class="podium__name">{{ row.name }}</p>
-      <p class="podium__company" *ngIf="row.company">
-        <span class="chip" aria-hidden="true">{{ row.companyInitials }}</span>
-        {{ row.company }}
-      </p>
+      <p class="podium__company" *ngIf="row.company">{{ row.company }}</p>
       <p class="podium__score">
         <span class="podium__points">{{ row.total | number: '1.0-0' }}</span>
         <span class="unit">pts</span>
@@ -108,10 +104,7 @@
               <span *ngSwitchCase="row.isNew" class="entry__delta entry__delta--new">nuevo</span>
             </ng-container>
           </p>
-          <p class="entry__company" *ngIf="row.company">
-            <span class="chip" aria-hidden="true">{{ row.companyInitials }}</span>
-            {{ row.company }}
-          </p>
+          <p class="entry__company" *ngIf="row.company">{{ row.company }}</p>
         </div>
 
         <p class="entry__score">
@@ -163,12 +156,12 @@
       </p>
 
       <h2 class="prize__title">
-        <span class="prize__title-line prize__title-line--accent">¡10 Bolsas de Merch</span>
+        <span class="prize__title-line prize__title-line--accent">¡5 Bolsas de Merch</span>
         <span class="prize__title-line">para tu Empresa! <span aria-hidden="true">🎁</span></span>
       </h2>
 
       <p class="prize__detail">
-        Las <strong>10 empresas con el mayor puntaje</strong> al cierre del desafío se
+        Las <strong>5 empresas con el mayor puntaje</strong> al cierre del desafío se
         llevarán una bolsa cargada de productos para celebrar a su equipo.
       </p>
 
@@ -194,14 +187,18 @@
       </header>
 
       <div class="social__grid">
-        <a class="social__card" *ngFor="let social of socials; trackBy: trackBySocial" [href]="social.url"
-          target="_blank" rel="noopener noreferrer">
+        <a class="social__card" [ngClass]="'social__card--' + social.key"
+          *ngFor="let social of socials; trackBy: trackBySocial" [href]="social.url" target="_blank"
+          rel="noopener noreferrer">
+          <!-- El icono grande es el gancho: se reconoce la plataforma antes de
+               leer el nombre. Va fuera del QR para no tapar modulos. -->
+          <span class="social__badge" aria-hidden="true">
+            <img *ngIf="social.iconImg; else faIcon" class="social__badge-img" [src]="social.iconImg" alt="" />
+            <ng-template #faIcon><i [class]="social.icon"></i></ng-template>
+          </span>
           <img class="social__qr" [src]="social.qr" [alt]="'Código QR de ' + social.label" width="128" height="128"
             loading="lazy" />
-          <span class="social__name">
-            <i [class]="social.icon" aria-hidden="true"></i>
-            {{ social.label }}
-          </span>
+          <span class="social__name">{{ social.label }}</span>
           <span class="social__detail">{{ social.detail }}</span>
         </a>
       </div>

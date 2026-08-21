@@ -1,7 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { catchError, of, Subject, switchMap, takeUntil, timer } from 'rxjs';
+import {
+  catchError,
+  Observable,
+  of,
+  Subject,
+  switchMap,
+  takeUntil,
+  timer,
+} from 'rxjs';
 
 interface SheetRow {
   row_number: number;
@@ -27,8 +35,6 @@ interface RankedRow {
   name: string;
   company: string;
   initials: string;
-  /** Iniciales de la empresa para el chip que acompana al nombre. */
-  companyInitials: string;
   /** Medalla del puesto (vacia del cuarto en adelante). */
   medal: string;
   dados: number;
@@ -45,7 +51,10 @@ interface SocialLink {
   key: string;
   label: string;
   detail: string;
-  icon: string;
+  /** Clase de Font Awesome; se ignora si hay iconImg. */
+  icon?: string;
+  /** Logo propio (SVG de assets/imgs) para las marcas que no estan en FA. */
+  iconImg?: string;
   url: string;
   qr: string;
 }
@@ -80,7 +89,7 @@ export class AppComponent {
       key: 'comparador',
       label: 'Comparador',
       detail: 'queplan.cl',
-      icon: 'fas fa-magnifying-glass-chart',
+      iconImg: 'assets/imgs/lupa_qp.svg',
       url: 'https://www.queplan.cl',
       qr: 'assets/qr/qr-comparador.svg',
     },
@@ -129,11 +138,7 @@ export class AppComponent {
   ngOnInit(): void {
     timer(0, this.pollIntervalMs)
       .pipe(
-        switchMap(() =>
-          this._http
-            .get<SheetResponse>(this.endpoint)
-            .pipe(catchError(() => of(null))),
-        ),
+        switchMap(() => this.fetchSheet()),
         takeUntil(this.destroy$),
       )
       .subscribe((response) => {
@@ -152,6 +157,14 @@ export class AppComponent {
         // se queda en la ultima valida en vez de mostrar una pagina vacia.
         this.page = Math.min(this.page, this.totalPages - 1);
       });
+  }
+
+  /* Fuente del poll, aparte del ngOnInit: el error de red se resuelve aca
+     (null) y arriba solo queda el manejo del dato. */
+  private fetchSheet(): Observable<SheetResponse | null> {
+    return this._http
+      .get<SheetResponse>(this.endpoint)
+      .pipe(catchError(() => of(null)));
   }
 
   ngOnDestroy(): void {
@@ -237,7 +250,6 @@ export class AppComponent {
         name: (row['Nombre completo'] || '').trim() || 'Participante',
         company,
         initials: this.initialsOf(row['Nombre completo']),
-        companyInitials: this.initialsOf(company),
         medal: AppComponent.medals[position] ?? '',
         dados: Number(row['Puntaje Dados']) || 0,
         raspe: Number(row['Puntaje Raspe']) || 0,
