@@ -6,7 +6,7 @@ import { catchError, of, Subject, switchMap, takeUntil, timer } from 'rxjs';
 interface SheetRow {
   row_number: number;
   'Marca temporal': string;
-  'Correo corporativo': string;
+  // 'Correo corporativo': string;
   'Nombre completo': string;
   Cargo: string;
   'Puntaje Dados': number;
@@ -102,8 +102,8 @@ export class AppComponent {
     },
   ];
 
-  private readonly endpoint = 'https://qptech.app.n8n.cloud/webhook/sheet-data';
-  private readonly pollIntervalMs = 5000;
+  private readonly endpoint = 'https://script.google.com/macros/s/AKfycbxq_UvjT1qg-2TjkQx5y0O153bl5sQ8DZHaVEMWvPuQ3TiLDsPuaSRhhfT8ZFC_UepqvQ/exec';
+  private readonly pollIntervalMs = 60000;
   private readonly destroy$ = new Subject<void>();
 
   /** Posicion y puntaje del poll anterior, para detectar movimientos. */
