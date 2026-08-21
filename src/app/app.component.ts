@@ -111,7 +111,7 @@ export class AppComponent {
     },
   ];
 
-  private readonly endpoint = 'https://script.google.com/macros/s/AKfycbxq_UvjT1qg-2TjkQx5y0O153bl5sQ8DZHaVEMWvPuQ3TiLDsPuaSRhhfT8ZFC_UepqvQ/exec';
+  private readonly endpoint =''
   private readonly pollIntervalMs = 60000;
   private readonly destroy$ = new Subject<void>();
 
