@@ -131,7 +131,7 @@ export class AppComponent {
       .pipe(
         switchMap(() =>
           this._http
-            .post<SheetResponse>(this.endpoint, {})
+            .get<SheetResponse>(this.endpoint)
             .pipe(catchError(() => of(null))),
         ),
         takeUntil(this.destroy$),
