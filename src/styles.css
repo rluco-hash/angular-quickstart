@@ -1,1 +1,48 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Design tokens compartidos por todas las paginas (ranking, formulario, etc).
+   Valores reales tomados de apps/frontend/chile/src/scss/_variables.scss y
+   libs/front/src/lib/styles/_variables.scss. Viven en :root (no en el :host de
+   un componente) para que cualquier ruta pueda usarlos sin redefinirlos. */
+:root {
+  --theme-secondary: #133660; /* theme-colors.secondary */
+  --theme-secondary-300: #7186a0; /* theme-colors.secondary-300 */
+  --theme-primary: #41b4e4; /* theme-colors.primary */
+  --theme-primary-700: #276c89; /* theme-colors.primary-700 */
+  --theme-white: #ffffff; /* theme-colors.white */
+  --theme-dark-300: #b2b2b2; /* theme-colors.dark-300 */
+  --theme-dark-400: #999999; /* theme-colors.dark-400 */
+  --theme-success: #00b900; /* theme-colors.success */
+  --theme-warning: #fa8e04; /* theme-colors.warning */
+  /* theme-colors.dark-50 NO EXISTE en $theme-colors (bug preexistente en el
+     .scss original: el map-get devuelve null). La escala real es
+     dark-100, dark-200, dark-300... Uso dark-100 como reemplazo mas cercano;
+     ajusta si prefieres otro tono claro. */
+  --theme-dark-50: #e9e9e9;
+
+  --radius-sm: 4px; /* border-radius.sm */
+  --radius-lg: 12px; /* border-radius.lg */
+  /* Radio propio del scoreboard: las tarjetas del ranking y el banner del
+     premio piden mas curva que los 12px del sistema. */
+  --radius-xl: 20px;
+  --ink: var(--theme-secondary);
+  --ink-soft: var(--theme-secondary-300);
+  --accent: var(--theme-primary);
+  --accent-deep: var(--theme-primary-700);
+  --surface: var(--theme-white);
+  --canvas: #ffffff;
+  /* Banda de los QR: un gris apenas mas oscuro que el fondo, para cerrar la
+     pagina sin dibujar otra linea. */
+  --band: #f2f5fa;
+  --hairline: rgba(19, 54, 96, 0.1);
+  /* Metales del podio: saturados lo justo para leerse como oro/plata/bronce
+     sobre blanco sin pelearse con el celeste de marca. */
+  --gold: #e0982f;
+  --gold-soft: rgba(224, 152, 47, 0.12);
+  --silver: var(--theme-secondary-300);
+  --silver-soft: rgba(113, 134, 160, 0.12);
+  --bronze: #d97a34;
+  --bronze-soft: rgba(217, 122, 52, 0.12);
+  /* Relleno de las filas del top 3: celeste de marca muy diluido. */
+  --top-tint: rgba(65, 180, 228, 0.07);
+}

@@ -1,0 +1,153 @@
+<div class="registro">
+  <div class="registro__card">
+    <div class="registro__header">
+      <a class="registro__back" routerLink="/">
+        <i class="fas fa-arrow-left" aria-hidden="true"></i>
+        Volver al ranking
+      </a>
+
+      <p class="registro__badge">
+        <span aria-hidden="true">🎮</span>
+        Desafío QuePlan 2025
+      </p>
+    </div>
+
+    <h1 class="registro__title">
+      <span class="registro__title-line">Registra tu</span>
+      <span class="registro__title-line registro__title-line--accent"
+        >participación</span
+      >
+    </h1>
+
+    <p class="registro__lead">
+      Completa tus datos y puntajes para sumarte al ranking.
+    </p>
+
+    <form
+      class="registro__form"
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      novalidate
+    >
+      <div class="field">
+        <label class="field__label" for="marca">Marca</label>
+        <input
+          id="marca"
+          type="text"
+          class="field__input"
+          formControlName="marca"
+          [class.field__input--error]="isInvalid('marca')"
+          placeholder="Ej: Coca"
+        />
+        <p class="field__error" *ngIf="isInvalid('marca')">Ingresa la marca.</p>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="nombreEmpresa">Empresa</label>
+        <input
+          id="nombreEmpresa"
+          type="text"
+          class="field__input"
+          formControlName="nombreEmpresa"
+          [class.field__input--error]="isInvalid('nombreEmpresa')"
+          placeholder="Ej: Empresa SPA"
+        />
+        <p class="field__error" *ngIf="isInvalid('nombreEmpresa')">
+          Ingresa el nombre de la empresa.
+        </p>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="nombre">Nombre completo</label>
+        <input
+          id="nombre"
+          type="text"
+          class="field__input"
+          formControlName="nombre"
+          [class.field__input--error]="isInvalid('nombre')"
+          placeholder="Ej: Ana Pérez"
+        />
+        <p class="field__error" *ngIf="isInvalid('nombre')">
+          Ingresa tu nombre completo.
+        </p>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="cargo">Cargo</label>
+        <input
+          id="cargo"
+          type="text"
+          class="field__input"
+          formControlName="cargo"
+          [class.field__input--error]="isInvalid('cargo')"
+          placeholder="Ej: Jefa de Marketing"
+        />
+        <p class="field__error" *ngIf="isInvalid('cargo')">Ingresa tu cargo.</p>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="correo">Correo corporativo</label>
+        <input
+          id="correo"
+          type="email"
+          class="field__input"
+          formControlName="correo"
+          [class.field__input--error]="isInvalid('correo')"
+          placeholder="Ej: ana.perez@empresa.cl"
+        />
+        <p class="field__error" *ngIf="isInvalid('correo')">
+          {{
+            form.get("correo")?.errors?.["required"]
+              ? "Ingresa tu correo."
+              : "Ingresa un correo válido."
+          }}
+        </p>
+      </div>
+
+      <div class="registro__scores">
+        <div class="field">
+          <label class="field__label" for="puntajeDados">Puntaje Dados</label>
+          <input
+            id="puntajeDados"
+            type="number"
+            min="0"
+            class="field__input"
+            formControlName="puntajeDados"
+            [class.field__input--error]="isInvalid('puntajeDados')"
+            placeholder="0"
+          />
+          <p class="field__error" *ngIf="isInvalid('puntajeDados')">
+            Ingresa un puntaje válido.
+          </p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="puntajeRaspe">Puntaje Raspe</label>
+          <input
+            id="puntajeRaspe"
+            type="number"
+            min="0"
+            class="field__input"
+            formControlName="puntajeRaspe"
+            [class.field__input--error]="isInvalid('puntajeRaspe')"
+            placeholder="0"
+          />
+          <p class="field__error" *ngIf="isInvalid('puntajeRaspe')">
+            Ingresa un puntaje válido.
+          </p>
+        </div>
+      </div>
+
+      <p class="registro__submit-error" *ngIf="hasSubmitError" role="alert">
+        No se pudo enviar tu participación. Intenta nuevamente.
+      </p>
+
+      <button type="submit" class="registro__submit" [disabled]="isSubmitting">
+        <ng-container *ngIf="!isSubmitting; else sending"
+          >Enviar participación</ng-container
+        >
+        <ng-template #sending>Enviando…</ng-template>
+      </button>
+    </form>
+  </div>
+</div>

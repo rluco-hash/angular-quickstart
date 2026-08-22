@@ -1,0 +1,195 @@
+/* Los design tokens (--ink, --accent, --hairline, etc.) viven en :root, en
+   src/styles.css: los comparte esta pantalla con el ranking. */
+:host {
+  position: relative;
+  display: block;
+  min-height: 100vh;
+  background: var(--band);
+  color: var(--ink);
+  font-family: "Montserrat", sans-serif;
+}
+
+.registro {
+  display: flex;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 4vw, 2.5rem);
+}
+
+.registro__card {
+  position: relative;
+  width: 100%;
+  max-width: 32rem;
+  padding: clamp(1.75rem, 5vw, 2.5rem);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-xl);
+}
+
+.registro__header {
+  display: flex;
+}
+
+.registro__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+.registro__back:hover,
+.registro__back:focus-visible {
+  outline: none;
+  color: var(--accent-deep);
+}
+
+.registro__back i {
+  font-size: 0.75rem;
+}
+
+.registro__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-left: auto;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  background: rgba(65, 180, 228, 0.12);
+  border-radius: 100px;
+}
+
+.registro__title {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.3em;
+  margin: 0.75rem 0 0;
+  font-family: "Zalando Sans SemiExpanded", sans-serif;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.registro__title-line--accent {
+  color: var(--accent);
+}
+
+.registro__lead {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.registro__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin-top: 1.75rem;
+}
+
+.registro__scores {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
+
+.field__input {
+  padding: 0.65rem 0.85rem;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.field__input::placeholder {
+  color: var(--theme-dark-300);
+}
+
+.field__input:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(65, 180, 228, 0.18);
+}
+
+.field__input--error {
+  border-color: var(--theme-warning);
+}
+
+.field__input--error:focus-visible {
+  box-shadow: 0 0 0 3px rgba(250, 142, 4, 0.18);
+}
+
+.field__error {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--theme-warning);
+}
+
+.registro__submit-error {
+  margin: 0;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--theme-warning);
+  background: rgba(250, 142, 4, 0.1);
+  border-radius: var(--radius-sm);
+}
+
+.registro__submit {
+  padding: 0.75rem 1.15rem;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--theme-white);
+  background: var(--accent-deep);
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.registro__submit:hover:not(:disabled),
+.registro__submit:focus-visible:not(:disabled) {
+  outline: none;
+  background: var(--accent);
+}
+
+.registro__submit:disabled {
+  cursor: default;
+  opacity: 0.65;
+}
+
+@media (max-width: 480px) {
+  .registro__scores {
+    grid-template-columns: 1fr;
+  }
+}
